@@ -66,7 +66,57 @@ summary(unstructured_toenail_mod)
 
 # Question 2
 
+* The outcome variable Y is a count of the of the number of new skin cancers per year. 
+
+*The categorical variable Treatment is coded 1=beta carotene, 0 =placebo. 
+
+*The variable Year denotes the year of follow-up. 
+
+*The categorical variable Gender is coded 1 male, 0 female. 
+
+*The categorical variable Skin denotes skin type and is coded 1 = burns, 0 otherwise. 
+
+*The variable Exposure is a count of the number of previous skin cancers. 
+
+*The variable Age is the age (in years) of each subject at randomization.
+
 ```{r}
-skin_dat = read.delim("/Users/SabrinaLin/Documents/Fall_2020_Longitudinal/HW2/skin.txt", header = TRUE, sep = "", col.names = c("ID", "Center", "Age", "Skin", "Gender", "Exposure", "Y", "Treatment", "Year", "X1", "X2"))
+skin_dat <- read.delim("/Users/SabrinaLin/Documents/Fall_2020_Longitudinal/HW2/skin.txt", header = TRUE, sep = "", col.names = c("ID", "Center", "Age", "Skin", "Gender", "Exposure", "Y", "Treatment", "Year")) %>% 
+  janitor::clean_names() %>% 
+  mutate(
+    treatment = as.factor(treatment),
+    gender = as.factor(gender),
+    skin = as.factor(skin)
+  )
+```
+
+## Part 1
+Set up a suitable GEE model for rate of skin cancers with Treatment and Year as covariates.
+
+```{r}
+skin_geeglm_mod <- geeglm(y ~ treatment + year, data = skin_dat, family = "poisson", id = id, corstr = "unstructured")
+
+summary(skin_geeglm_mod)
+```
+
+## Part 2
+Provide Interpretations for the coefficients in your model.
+
+```{r}
+
+```
+
+## Part 3
+From the results of your analysis what conclusions do you draw about the effect of beta carotene on the rate of skin cancers? Provide results that support your conclusions.
+
+```{r}
+
+```
+
+## Part 4
+Repeat the above analysis adjusting for skin type, age, and the count of the number of previous skin cancers. What conclusions do you draw about the effect of beta carotene on the adjusted rate of skin cancers?
+
+```{r}
+
 ```
 
