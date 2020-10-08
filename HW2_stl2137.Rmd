@@ -1,0 +1,72 @@
+---
+title: 'P8157 HW #2'
+author: "Sabrina Lin stl2137"
+date: "10/8/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(geepack)
+```
+
+# Question 1 
+
+* The binary onycholysis outcome variable Y is coded 0 = none or mild, 1 = moderate or severe. 
+
+* The categorical variable Treatment is coded 1=oral treatment A, 0=oral treatment B. 
+
+* The variable Month denotes the exact timing of measurements in months. The variable Visit denotes the visit number (visit numbers 1-7 correspond to scheduled visits at 0, 4, 8, 12, 24, 36, and 48 weeks).
+
+```{r}
+### Import data
+
+toenail_dat <- read.delim("/Users/SabrinaLin/Documents/Fall_2020_Longitudinal/HW2/toenail.txt", header = TRUE, sep = "", col.names = c("ID", "Y", "Treatment", "Month", "Visit")) %>% 
+  janitor::clean_names() %>% 
+  mutate(
+    treatment = as.factor()
+  )
+  
+```
+
+## Part 1
+
+Consider a marginal model for the log odds of moderate or severe onycholysis. Using GEE, set up a suitable model assuming linear trends. Use month as the time variable. Assume “exchangeable” correlation for the association among the repeated binary responses.
+
+```{r}
+marginal_toenail_mod <- geeglm(y ~ treatment + month, data = toenail_dat, family = "binomial" (link = "logit"), id = id, corstr = "exchangeable")
+
+summary(marginal_toenail_mod)
+```
+
+## Part 2 
+
+Provide Interpretations for the coefficients in your model.
+
+## Part 3
+
+From the results of your analysis what conclusions do you draw about the effect of treatment on changes in the severity of onycholysis over time? Provide results that support your conclusions.
+
+## Part 4
+
+Try Different correlation structures. Is the analysis and inference sensitive to this choice?
+
+```{r}
+### AR(1) correlation structure
+ar1_toenail_mod <- geeglm(y ~ treatment + month, data = toenail_dat, family = "binomial" (link = "logit"), id = id, corstr = "ar1")
+
+summary(ar1_toenail_mod)
+
+### Unstructured correlation structure
+unstructured_toenail_mod <- geeglm(y ~ treatment + month, data = toenail_dat, family = "binomial" (link = "logit"), id = id, corstr = "unstructured")
+
+summary(unstructured_toenail_mod)
+```
+
+# Question 2
+
+```{r}
+skin_dat = read.delim("/Users/SabrinaLin/Documents/Fall_2020_Longitudinal/HW2/skin.txt", header = TRUE, sep = "", col.names = c("ID", "Center", "Age", "Skin", "Gender", "Exposure", "Y", "Treatment", "Year", "X1", "X2"))
+```
+
