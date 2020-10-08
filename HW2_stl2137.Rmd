@@ -8,6 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
+library(gee)
 library(geepack)
 ```
 
@@ -25,9 +26,8 @@ library(geepack)
 toenail_dat <- read.delim("/Users/SabrinaLin/Documents/Fall_2020_Longitudinal/HW2/toenail.txt", header = TRUE, sep = "", col.names = c("ID", "Y", "Treatment", "Month", "Visit")) %>% 
   janitor::clean_names() %>% 
   mutate(
-    treatment = as.factor()
+    treatment = as.factor(treatment)
   )
-  
 ```
 
 ## Part 1
