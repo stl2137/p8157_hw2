@@ -44,9 +44,15 @@ summary(marginal_toenail_mod)
 
 Provide Interpretations for the coefficients in your model.
 
-## Part 3
+* 0.04020 is the log odds ratio between treatment A and treatment B of having moderate or severe onycholysis for every month in the study, holding all other variables constant. 
+
+_-0.20505 is the log odds ratio of having moderate or severe onycholysis versus mild or no onycholysis for every month in the study, holding all other variables constant. 
+
+## Part 3 (no idea if this makes sense)
 
 From the results of your analysis what conclusions do you draw about the effect of treatment on changes in the severity of onycholysis over time? Provide results that support your conclusions.
+
+* Based off the results of the model, treatment A compared to treatment B increases the probability of developing moderate or severe onycholysis when time is held constant. When treatment is held constant, time will decrease the probability of developing moderate or sever onycholysis. Since the absolute value for the coefficient of month is greater than the absolute value for the coefficient of treatment A compared to treatment B, the probability of developing severity of onycholysis over time will decrease. 
 
 ## Part 4
 
