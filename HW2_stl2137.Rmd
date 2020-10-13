@@ -35,6 +35,14 @@ toenail_dat <- read.delim("/Users/SabrinaLin/Documents/Fall_2020_Longitudinal/HW
 Consider a marginal model for the log odds of moderate or severe onycholysis. Using GEE, set up a suitable model assuming linear trends. Use month as the time variable. Assume “exchangeable” correlation for the association among the repeated binary responses.
 
 ```{r}
+marginal_toenail_mod <- geeglm(y ~ treatment + month + month*treatment, data = toenail_dat, family = "binomial" (link = "logit"), id = id, corstr = "exchangeable")
+
+summary(marginal_toenail_mod)
+```
+
+* The interaction in the above model is not found to be significant with a p-value of 0.15086, thus it will be taken out from the model continuing on. 
+
+```{r}
 marginal_toenail_mod <- geeglm(y ~ treatment + month, data = toenail_dat, family = "binomial" (link = "logit"), id = id, corstr = "exchangeable")
 
 summary(marginal_toenail_mod)
@@ -44,15 +52,15 @@ summary(marginal_toenail_mod)
 
 Provide Interpretations for the coefficients in your model.
 
-* 0.04020 is the log odds ratio between treatment A and treatment B of having moderate or severe onycholysis for every month in the study, holding all other variables constant. 
+* `r marginal_toenail_mod$coefficients[2]` is the log odds ratio between treatment A and treatment B of having moderate or severe onycholysis for every month in the study, holding all other variables constant. 
 
-_-0.20505 is the log odds ratio of having moderate or severe onycholysis versus mild or no onycholysis for every month in the study, holding all other variables constant. 
+* `r marginal_toenail_mod$coefficients[3]` is the log odds ratio of having moderate or severe onycholysis versus mild or no onycholysis for every month in the study, holding all other variables constant. 
 
-## Part 3 (no idea if this makes sense)
+## Part 3 
 
 From the results of your analysis what conclusions do you draw about the effect of treatment on changes in the severity of onycholysis over time? Provide results that support your conclusions.
 
-* Based off the results of the model, treatment A compared to treatment B increases the probability of developing moderate or severe onycholysis when time is held constant. When treatment is held constant, time will decrease the probability of developing moderate or sever onycholysis. Since the absolute value for the coefficient of month is greater than the absolute value for the coefficient of treatment A compared to treatment B, the probability of developing severity of onycholysis over time will decrease. 
+* Based off the results of the model, the effect of treatment on changes in the severity of onycholysis is not significant with the p-value of 0.87388 while the effect of time in months on changes in the severity of onycholysis is significant with the p-value of 2.4e-15. In addition, from the first model, the interaction term between treatment and time was not found to be significant (p-value = 0.15086). From the model, I have gathered that treatment over time does not significantly effect the severity of onycholysis. 
 
 ## Part 4
 
@@ -60,15 +68,17 @@ Try Different correlation structures. Is the analysis and inference sensitive to
 
 ```{r}
 ### AR(1) correlation structure
-ar1_toenail_mod <- geeglm(y ~ treatment + month, data = toenail_dat, family = "binomial" (link = "logit"), id = id, corstr = "ar1")
+ar1_toenail_mod <- geeglm(y ~ treatment + month + treatment*month, data = toenail_dat, family = "binomial" (link = "logit"), id = id, corstr = "ar1")
 
 summary(ar1_toenail_mod)
 
 ### Unstructured correlation structure
-unstructured_toenail_mod <- geeglm(y ~ treatment + month, data = toenail_dat, family = "binomial" (link = "logit"), id = id, corstr = "unstructured")
+unstructured_toenail_mod <- geeglm(y ~ treatment + month + treatment*month, data = toenail_dat, family = "binomial" (link = "logit"), id = id, corstr = "unstructured")
 
 summary(unstructured_toenail_mod)
 ```
+
+* Although the coefficients in the model do change, the significant variables between each model utilizing different correlation structures remain the same. 
 
 # Question 2
 
@@ -100,6 +110,14 @@ skin_dat <- read.delim("/Users/SabrinaLin/Documents/Fall_2020_Longitudinal/HW2/s
 Set up a suitable GEE model for rate of skin cancers with Treatment and Year as covariates.
 
 ```{r}
+skin_geeglm_mod <- geeglm(y ~ treatment + year + treatment*year, data = skin_dat, family = "poisson", id = id, corstr = "unstructured")
+
+summary(skin_geeglm_mod)
+```
+
+* The interaction term `treatment*year` is not significant in the first model with a p-value of 0.51, thus going forward the model will not utilize the interaction term. 
+
+```{r}
 skin_geeglm_mod <- geeglm(y ~ treatment + year, data = skin_dat, family = "poisson", id = id, corstr = "unstructured")
 
 summary(skin_geeglm_mod)
@@ -108,21 +126,54 @@ summary(skin_geeglm_mod)
 ## Part 2
 Provide Interpretations for the coefficients in your model.
 
-```{r}
+* The log rate ratio for the count of the number of new skin cancers per year is `r skin_geeglm_mod$coefficients[2]` for the treatment beta carotene group versus the placebo group, holding all other variables constant. 
 
-```
+* The log rate ratio for the count of the number of new skin cancers per year is `r skin_geeglm_mod$coefficients[3]` for each increase in year, holding all other variables constant.  
 
 ## Part 3
 From the results of your analysis what conclusions do you draw about the effect of beta carotene on the rate of skin cancers? Provide results that support your conclusions.
 
 ```{r}
-
+summary(skin_geeglm_mod)
 ```
+
+The treatment positively affects the outcome on the rate of skin cancers, thus compared to placebo, beta carotene appears to increase the rate of skin cancers. That being said, the treatment variable in the model is not significant (p-value = 0.22), thus the beta crotene treatment does not significantly effect the rate of skin cancers. 
 
 ## Part 4
 Repeat the above analysis adjusting for skin type, age, and the count of the number of previous skin cancers. What conclusions do you draw about the effect of beta carotene on the adjusted rate of skin cancers?
 
 ```{r}
+full_skin_geeglm <- geeglm(y ~ treatment + year + skin + age + exposure, data = skin_dat, family = "poisson", id = id, corstr = "unstructured")
 
+summary(full_skin_geeglm)
 ```
+
+With skin type, age, and the count of the number of previous skin cancers included in this model, the treatment of beta carotene also appears to increase the rate of skin cancers. Like the previous model, treatment is still insignificant in the model with a p-value of 0.2354. Age and the count of the number of previous skin cancers do significantly effect the outcome on the rate of skin cancers however, with respective p-values of 0.0029 and <2e-16.
+
+## Part 5
+
+Try Different correlation structures. Is the analysis and inference sensitive to this choice?
+
+```{r}
+ar1_full_skin_geeglm <- geeglm(y ~ treatment + year + skin + age + exposure, data = skin_dat, family = "poisson", id = id, corstr = "ar1")
+
+summary(ar1_full_skin_geeglm)
+
+exchang_full_skin_geeglm <- geeglm(y ~ treatment + year + skin + age + exposure, data = skin_dat, family = "poisson", id = id, corstr = "exchangeable")
+
+summary(exchang_full_skin_geeglm)
+```
+
+* Although the coefficients in the model do change, the significant variables between each model utilizing different correlation structures remain the same. 
+
+## Part 6
+
+Do you need to account for overdisperion. Comment.
+
+```{r}
+dp = sum(residuals(full_skin_geeglm,type ="pearson")^2)/full_skin_geeglm$df.residual
+```
+
+* Overdispersion does need to be accounted for, as the estimated scale parameter of the model, 1.64 is greater than 1. A manual calculation of overdispersion confirms that $\phi$ is equal to `r dp`.
+
 
